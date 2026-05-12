@@ -1,11 +1,12 @@
 package com.turkcell.ticketapp.di
 
-
-import com.turkcell.ticketapp.ui.login.LoginViewModel
-import org.koin.core.module.dsl.viewModel
+import com.turkcell.ticketapp.viewmodel.LoginViewModel
+import com.turkcell.ticketapp.viewmodel.RegisterViewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val appModule = module {
-    // LoginViewModel — AuthRepository'yi Koin'den otomatik alır
-    viewModel { LoginViewModel(authRepository = get()) }
+    // viewModel
+    viewModelOf(::LoginViewModel)
+    viewModelOf(::RegisterViewModel)
 }
