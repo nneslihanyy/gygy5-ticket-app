@@ -2,7 +2,7 @@ package com.turkcell.data.util
 
 import com.turkcell.data.network.ApiException
 import com.turkcell.data.network.NetworkException
-import retrofit2.HttpException // 10 ay sonra garantisi yok..
+import retrofit2.HttpException
 import java.io.IOException
 
 // Todo: İlerde tekrar konuşalım.
@@ -19,5 +19,3 @@ suspend inline fun <T> runCatchingApi(crossinline block: suspend () -> T): Resul
     Result.failure(e)
 }
 
-// 1- Bir ekranda koin ile (araştır) authRepository'i kullanmaya çalışalım. (Giriş ekranı)
-// backende istek at, cevabı ekrana yazmana gerek yok.
