@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp // Çıkış butonu için ikon
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.ConfirmationNumber
 import androidx.compose.material.icons.filled.LocationOn
@@ -27,11 +28,18 @@ import androidx.compose.material.icons.filled.QrCode2
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,71 +53,117 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.turkcell.core.domain.event.Event
 import com.turkcell.core.domain.ticket.Ticket
+import com.turkcell.core.util.formatIsoDateTr // Kendi core paketinizdeki doğru formatlayıcı
+import com.turkcell.core.util.formatPriceTl   // Kendi core paketinizdeki doğru formatlayıcı
 import com.turkcell.ticketapp.viewmodel.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
-import java.text.SimpleDateFormat
-import java.util.Locale
-import java.util.TimeZone
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = koinViewModel()
+    onEventClick: (String) -> Unit,
+    onTicketClick: (String) -> Unit,
+    onNavigateToMyTickets: () -> Unit,
+    viewModel: HomeViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    Surface(modifier = Modifier.fillMaxSize()) {
-        Column(
+    // Ekran her açıldığında verileri otomatik tazeleyen tetikleyici
+    LaunchedEffect(Unit) {
+        viewModel.loadEvents()
+        viewModel.loadTickets()
+    }
+
+    // Üst bar ve içerik yerleşimi için Scaffold entegrasyonu
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("") }, // Başlık boş kalıyor çünkü aşağıda Merhaba yazıyor
+                actions = {
+                    // Hocanın istediği çıkış yapma butonu
+                    IconButton(onClick = { viewModel.logout() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                            contentDescription = "Çıkış Yap",
+                            tint = Color(0xFFEF4444) // Net kırmızı çıkış rengi
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent
+                )
+            )
+        }
+    ) { padding -> // Bu padding arayüzün barın altına kaçmasını önler
+
+        PullToRefreshBox(
+            isRefreshing = state.isRefreshing,
+            onRefresh = { viewModel.refresh() },
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(vertical = 24.dp)
+                .padding(padding) // Bar yüksekliği kadar içeriği aşağı öteler
         ) {
-            // Header
-            Text(
-                text = "Merhaba! 👋",
-                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(horizontal = 24.dp),
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-            Spacer(Modifier.height(4.dp))
-            Text(
-                text = "Etkinlikleri keşfet ve biletlerini yönet",
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(horizontal = 24.dp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(vertical = 12.dp)
+            ) {
+                // Header
+                Text(
+                    text = "Merhaba! 👋",
+                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = "Etkinlikleri keşfet ve biletlerini yönet",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
 
-            Spacer(Modifier.height(28.dp))
+                Spacer(Modifier.height(28.dp))
 
-            // — Etkinlikler Bölümü —
-            SectionHeader(
-                title = "🎉 Yaklaşan Etkinlikler",
-                modifier = Modifier.padding(horizontal = 24.dp),
-            )
-            Spacer(Modifier.height(12.dp))
+                // — Etkinlikler Bölümü —
+                SectionHeader(
+                    title = "🎉 Yaklaşan Etkinlikler",
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                )
+                Spacer(Modifier.height(12.dp))
 
-            EventsRow(
-                isLoading = state.isEventsLoading,
-                error = state.eventsError,
-                events = state.events,
-            )
+                EventsRow(
+                    isLoading = state.isEventsLoading,
+                    error = state.eventsError,
+                    events = state.events,
+                    onEventClick = onEventClick,
+                )
 
-            Spacer(Modifier.height(32.dp))
+                Spacer(Modifier.height(32.dp))
 
-            // — Biletlerim Bölümü —
-            SectionHeader(
-                title = "🎫 Biletlerim",
-                modifier = Modifier.padding(horizontal = 24.dp),
-            )
-            Spacer(Modifier.height(12.dp))
+                // — Biletlerim Bölümü —
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    SectionHeader(title = "🎫 Biletlerim")
+                    androidx.compose.material3.TextButton(onClick = onNavigateToMyTickets) {
+                        Text("Tümünü Gör", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
+                    }
+                }
+                Spacer(Modifier.height(12.dp))
 
-            TicketsSection(
-                isLoading = state.isTicketsLoading,
-                error = state.ticketsError,
-                tickets = state.tickets,
-            )
+                TicketsSection(
+                    isLoading = state.isTicketsLoading,
+                    error = state.ticketsError,
+                    tickets = state.tickets,
+                    onTicketClick = onTicketClick,
+                )
 
-            Spacer(Modifier.height(24.dp))
+                Spacer(Modifier.height(24.dp))
+            }
         }
     }
 }
@@ -133,6 +187,7 @@ private fun EventsRow(
     isLoading: Boolean,
     error: String?,
     events: List<Event>,
+    onEventClick: (String) -> Unit,
 ) {
     when {
         isLoading -> {
@@ -178,7 +233,7 @@ private fun EventsRow(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 items(items = events, key = { it.id }) { event ->
-                    EventCard(event)
+                    EventCard(event, onClick = { onEventClick(event.id) })
                 }
             }
         }
@@ -186,8 +241,9 @@ private fun EventsRow(
 }
 
 @Composable
-private fun EventCard(event: Event) {
+private fun EventCard(event: Event, onClick: () -> Unit) {
     Card(
+        onClick = onClick,
         modifier = Modifier
             .width(280.dp)
             .height(300.dp),
@@ -196,7 +252,6 @@ private fun EventCard(event: Event) {
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Gradient header with first letter
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -234,7 +289,6 @@ private fun EventCard(event: Event) {
                     )
                     Spacer(Modifier.height(6.dp))
 
-                    // Venue row
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Default.LocationOn,
@@ -253,7 +307,6 @@ private fun EventCard(event: Event) {
                     }
                 }
 
-                // Date row
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Default.CalendarMonth,
@@ -263,7 +316,7 @@ private fun EventCard(event: Event) {
                     )
                     Spacer(Modifier.width(4.dp))
                     Text(
-                        text = formatIsoDate(event.startsAt),
+                        text = formatIsoDateTr(event.startsAt), // Sizin core utils fonksiyonunuz fırlatıldı
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
                         color = MaterialTheme.colorScheme.primary,
                     )
@@ -280,6 +333,7 @@ private fun TicketsSection(
     isLoading: Boolean,
     error: String?,
     tickets: List<Ticket>,
+    onTicketClick: (String) -> Unit,
 ) {
     when {
         isLoading -> {
@@ -344,7 +398,7 @@ private fun TicketsSection(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 tickets.forEach { ticket ->
-                    TicketCard(ticket)
+                    TicketCard(ticket, onClick = { onTicketClick(ticket.id) })
                 }
             }
         }
@@ -352,7 +406,7 @@ private fun TicketsSection(
 }
 
 @Composable
-private fun TicketCard(ticket: Ticket) {
+private fun TicketCard(ticket: Ticket, onClick: () -> Unit) {
     val statusColor = when (ticket.status) {
         "VALID" -> Color(0xFF22C55E)
         "USED" -> Color(0xFF64748B)
@@ -365,6 +419,7 @@ private fun TicketCard(ticket: Ticket) {
     }
 
     Card(
+        onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -376,7 +431,6 @@ private fun TicketCard(ticket: Ticket) {
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // QR icon circle
             Box(
                 modifier = Modifier
                     .size(52.dp)
@@ -401,7 +455,6 @@ private fun TicketCard(ticket: Ticket) {
 
             Spacer(Modifier.width(16.dp))
 
-            // Ticket info
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = ticket.eventName,
@@ -439,16 +492,14 @@ private fun TicketCard(ticket: Ticket) {
                     )
                     Spacer(Modifier.width(2.dp))
                     Text(
-                        text = formatIsoDate(ticket.eventStartsAt),
+                        text = formatIsoDateTr(ticket.eventStartsAt), // Sizin core utils fonksiyonunuz fırlatıldı
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
 
-            // Status + Type badge column
             Column(horizontalAlignment = Alignment.End) {
-                // Status badge
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
@@ -467,41 +518,18 @@ private fun TicketCard(ticket: Ticket) {
 
                 Spacer(Modifier.height(6.dp))
 
-                // Ticket type
                 Text(
                     text = ticket.ticketTypeName,
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
 
-                // Price
                 Text(
-                    text = formatPrice(ticket.priceCents),
+                    text = formatPriceTl(ticket.priceCents), // Sizin core utils fonksiyonunuz fırlatıldı
                     style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.primary,
                 )
             }
         }
     }
-}
-
-// ─── Yardımcı Fonksiyonlar ──────────────────────────────────────────
-
-private fun formatIsoDate(isoString: String): String {
-    return try {
-        val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale("tr"))
-        parser.timeZone = TimeZone.getTimeZone("UTC")
-        val date = parser.parse(isoString)
-        val formatter = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale("tr"))
-        formatter.timeZone = TimeZone.getDefault()
-        formatter.format(date!!)
-    } catch (e: Exception) {
-        isoString.take(16).replace("T", " ")
-    }
-}
-
-private fun formatPrice(cents: Long): String {
-    val lira = cents / 100
-    val kurus = cents % 100
-    return if (kurus == 0L) "₺$lira" else "₺$lira,${kurus.toString().padStart(2, '0')}"
 }

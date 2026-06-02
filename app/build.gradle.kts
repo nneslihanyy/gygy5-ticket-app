@@ -72,4 +72,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.kotlinx.serialization.json)
 
+    //QR Code
+    implementation(libs.zxing.core)
+
 }

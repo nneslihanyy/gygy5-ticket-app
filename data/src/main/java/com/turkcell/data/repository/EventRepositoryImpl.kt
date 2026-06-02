@@ -9,5 +9,9 @@ import com.turkcell.data.util.runCatchingApi
 class EventRepositoryImpl(
     private val eventApi: EventApi
 ) : EventRepository {
-    override suspend fun getEvents(): Result<List<Event>> = runCatchingApi { eventApi.getEvents() }.map { list -> list.map { it.toDomain() }}
+    override suspend fun getEvents(): Result<List<Event>> =
+        runCatchingApi { eventApi.getEvents() }.map { list -> list.map { it.toDomain() } }
+
+    override suspend fun getEventById(id: String): Result<Event> =
+        runCatchingApi { eventApi.getEventById(id) }.map { it.toDomain() }
 }

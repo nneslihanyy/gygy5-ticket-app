@@ -1,3 +1,78 @@
 <resources>
     <string name="app_name">TicketApp</string>
+
+    <!-- Auth -->
+    <string name="login_title">Giriş Yap</string>
+    <string name="register_title">Kayıt Ol</string>
+    <string name="email_label">Email</string>
+    <string name="password_label">Şifre</string>
+    <string name="password_hint">Şifre (en az 8 karakter)</string>
+    <string name="login_button">Giriş Yap</string>
+    <string name="register_button">Kayıt Ol</string>
+    <string name="go_to_register">Hesabın yok mu? Kayıt ol</string>
+    <string name="go_to_login">Zaten hesabın var mı? Giriş yap</string>
+
+    <!-- Home -->
+    <string name="home_greeting">Merhaba! 👋</string>
+    <string name="home_subtitle">Etkinlikleri keşfet ve biletlerini yönet</string>
+    <string name="section_events">🎉 Yaklaşan Etkinlikler</string>
+    <string name="section_tickets">🎫 Biletlerim</string>
+    <string name="see_all">Tümünü Gör</string>
+    <string name="logout_desc">Çıkış Yap</string>
+
+    <!-- Event Detail -->
+    <string name="event_detail_title">Etkinlik Detayı</string>
+    <string name="venue_label">Mekan</string>
+    <string name="start_label">Başlangıç</string>
+    <string name="end_label">Bitiş</string>
+    <string name="ticket_types_title">Bilet Türleri</string>
+    <string name="no_ticket_types">Bu etkinlik için bilet türü tanımlanmamış.</string>
+    <string name="sold_out">Tükendi</string>
+    <string name="total_label">Toplam</string>
+    <string name="purchase_button">Satın Al</string>
+    <string name="not_specified">Belirtilmemiş</string>
+    <string name="max_quantity_format">Maks: %d</string>
+    <string name="remaining_format">%d / %d kalan</string>
+    <string name="increment_desc">Artır</string>
+    <string name="decrement_desc">Azalt</string>
+
+    <!-- Purchase Dialog -->
+    <string name="payment_dialog_title">Ödeme Onayı</string>
+    <string name="payment_dialog_message">Toplam %s tutarındaki satın almayı onaylıyor musunuz?</string>
+    <string name="payment_confirm">Onayla ve Öde</string>
+    <string name="payment_cancel">İptal</string>
+    <string name="purchase_success">Satın alma başarılı! Biletleriniz oluşturuldu.</string>
+
+    <!-- My Tickets -->
+    <string name="my_tickets_title">Biletlerim</string>
+    <string name="empty_tickets">Henüz biletiniz yok</string>
+    <string name="empty_tickets_sub">Bir etkinlikten bilet satın alın</string>
+
+    <!-- Ticket Detail -->
+    <string name="ticket_detail_title">Bilet Detayı</string>
+    <string name="qr_hint">Kapıda bu QR kodu gösterin</string>
+    <string name="qr_desc">QR Kod</string>
+    <string name="ticket_type_label">Bilet Türü</string>
+    <string name="date_label">Tarih</string>
+    <string name="price_label">Fiyat</string>
+    <string name="status_valid">Geçerli</string>
+    <string name="status_used">Kullanıldı</string>
+
+    <!-- Navigation -->
+    <string name="back_desc">Geri</string>
+
+    <!-- Error Messages -->
+    <string name="error_session_expired">Oturum süresi doldu, tekrar giriş yapın.</string>
+    <string name="error_not_purchase_owner">Bu işlem size ait değil.</string>
+    <string name="error_email_taken">Bu email zaten kayıtlı.</string>
+    <string name="error_capacity_exceeded">Stok yetersiz, etkinliği yenileyin.</string>
+    <string name="error_already_paid">Bu satın alma zaten ödenmiş.</string>
+    <string name="error_server">Sunucu şu anda cevap veremiyor.</string>
+    <string name="error_network">İnternet bağlantısı yok.</string>
+    <string name="error_unexpected">Beklenmeyen bir hata oluştu.</string>
+    <string name="error_unknown">Bilinmeyen bir hata oluştu.</string>
+    <string name="error_events_load">Etkinlikler yüklenemedi.</string>
+    <string name="error_tickets_load">Biletler yüklenemedi.</string>
+    <string name="error_event_load">Etkinlik yüklenemedi.</string>
+    <string name="error_login_invalid">Email veya şifre hatalı</string>
 </resources>

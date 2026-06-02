@@ -1,0 +1,7 @@
+package com.turkcell.core.domain.purchase
+
+data class PurchaseItem(
+    val ticketTypeId: String,
+    val quantity: Int,
+    val unitPriceCents: Long = 0,
+)

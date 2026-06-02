@@ -7,8 +7,11 @@ import com.turkcell.data.remote.TicketApi
 import com.turkcell.data.util.runCatchingApi
 
 class TicketRepositoryImpl(
-    private val ticketApi: TicketApi
+    private val ticketApi: TicketApi,
 ) : TicketRepository {
     override suspend fun getMyTickets(): Result<List<Ticket>> =
         runCatchingApi { ticketApi.getMyTickets() }.map { list -> list.map { it.toDomain() } }
+
+    override suspend fun getTicketById(id: String): Result<Ticket> =
+        runCatchingApi { ticketApi.getTicketById(id) }.map { it.toDomain() }
 }

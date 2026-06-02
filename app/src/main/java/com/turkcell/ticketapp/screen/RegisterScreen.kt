@@ -33,13 +33,12 @@ import org.koin.androidx.compose.koinViewModel
 fun RegisterScreen(
     viewModel: RegisterViewModel = koinViewModel(),
     onRegisterSuccess: () -> Unit,
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: () -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(state.isRegistered) {
-        if(state.isRegistered)
-            onRegisterSuccess()
+        if (state.isRegistered) onRegisterSuccess()
     }
 
     Surface(modifier = Modifier.fillMaxSize()) {
@@ -66,7 +65,7 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = state.password,
                 onValueChange = viewModel::onPasswordChange,
-                label = { Text("Şifre") },
+                label = { Text("Şifre (en az 8 karakter)") },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
