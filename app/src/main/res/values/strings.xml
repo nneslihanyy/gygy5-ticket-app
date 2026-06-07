@@ -61,12 +61,39 @@
     <!-- Navigation -->
     <string name="back_desc">Geri</string>
 
+    <!-- Staff -->
+    <string name="staff_title">QR Checking</string>
+    <string name="staff_subtitle">Etkinlik girişlerinde bilet doğrulaması yapın</string>
+    <string name="checkin_title">Bilet Tara</string>
+    <string name="checkin_scan_button">Kamera ile Tara</string>
+    <string name="checkin_gallery_button">Galeriden Seç</string>
+    <string name="checkin_scan_hint">Katılımcının bilet QR kodunu okutun</string>
+    <string name="checkin_idle_hint">Tara butonuna basarak kamerayı başlatın\nveya galeriden QR kodu seçin</string>
+    <string name="checkin_loading">Bilet doğrulanıyor…</string>
+    <string name="checkin_success">Giriş Onaylandı ✓</string>
+    <string name="checkin_scan_another">Başka Bir Bilet Tara</string>
+    <string name="camera_permission_required">Kamera izni gerekli</string>
+    <string name="camera_permission_rationale">QR kod taramak için kamera izni gereklidir</string>
+
+    <!-- Admin -->
+    <string name="admin_home_title">Admin Paneli</string>
+    <string name="admin_subtitle">Etkinlikleri ve biletleri yönetin</string>
+    <string name="admin_events_section">Etkinlik Yönetimi</string>
+    <string name="admin_events_subtitle">Etkinlik oluştur, düzenle ve sil</string>
+    <string name="admin_ticket_types_section">Bilet Türleri</string>
+    <string name="admin_ticket_types_subtitle">Bilet türlerini ve kapasitelerini yönet</string>
+    <string name="admin_checkin_section">Check-in İstatistikleri</string>
+    <string name="admin_checkin_subtitle">Girişleri ve kullanım raporlarını görüntüle</string>
+
     <!-- Error Messages -->
     <string name="error_session_expired">Oturum süresi doldu, tekrar giriş yapın.</string>
     <string name="error_not_purchase_owner">Bu işlem size ait değil.</string>
+    <string name="error_not_assigned">Bu etkinliğe atanmamışsınız.</string>
     <string name="error_email_taken">Bu email zaten kayıtlı.</string>
     <string name="error_capacity_exceeded">Stok yetersiz, etkinliği yenileyin.</string>
     <string name="error_already_paid">Bu satın alma zaten ödenmiş.</string>
+    <string name="error_already_used">Bu bilet daha önce kullanılmış.</string>
+    <string name="error_ticket_not_found">Bilet bulunamadı veya QR kod geçersiz.</string>
     <string name="error_server">Sunucu şu anda cevap veremiyor.</string>
     <string name="error_network">İnternet bağlantısı yok.</string>
     <string name="error_unexpected">Beklenmeyen bir hata oluştu.</string>
